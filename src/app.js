@@ -1,13 +1,14 @@
 const express = require("express");
-const responseHelper = require("./helpers/response.helper").helper();
-const db = require("./configs/db.config");
-const Student = require("./models/student.model");
+const dotenv = require("dotenv").config();
 const routes = require("./routes");
+const db = require("./configs/db.config");
+const responseHelper = require("./helpers/response.helper");
+const serverConfig = require("./configs/server.config");
+const Student = require("./models/student.model");
 
-const port = process.env.PORT || "3000";
 const app = express();
 
-app.use(responseHelper);
+app.use(responseHelper.helper());
 app.use("/api", routes);
 
 const initApp = async (server, db) => {
@@ -17,8 +18,8 @@ const initApp = async (server, db) => {
 
     Student.sync({ alter: true });
 
-    server.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
+    server.listen(serverConfig.port, () => {
+      console.log(`Server is running on port ${serverConfig.port}`);
     });
   } catch (e) {
     console.error(e);

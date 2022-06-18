@@ -45,6 +45,15 @@ const responseHelper = (req, res, next = null) => {
     else res.json(data);
   };
 
+  res.success = (data = null, status = 200, message = "") => {
+    const response = {
+      status: status,
+      data: data,
+      messages: message,
+    };
+    res.respond(response, status);
+  };
+
   res.fail = (messages, status = 400, code = null) => {
     const response = {
       status: status,
@@ -60,11 +69,11 @@ const responseHelper = (req, res, next = null) => {
   };
 
   res.respondDeleted = (data = null, message = "") => {
-    res.respond(data, responseCodes.deleted, message);
+    res.success(data, responseCodes.deleted, message);
   };
 
   res.respondUpdated = (data = null, message = "") => {
-    res.respond(data, responseCodes.updated, message);
+    res.success(data, responseCodes.updated, message);
   };
 
   res.respondNoContent = () => {

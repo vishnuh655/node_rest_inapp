@@ -31,7 +31,7 @@ module.exports = {
         },
       });
       if (updatedStudent && updatedStudent[0] === 1) {
-        res.respondUpdated(updatedStudent, "Student updated successfully");
+        res.respondUpdated(true, "Student updated successfully");
       } else {
         res.failNotFound("Student not found");
       }

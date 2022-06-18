@@ -1,14 +1,19 @@
 const Joi = require("joi");
+const { Op } = require("sequelize");
 const Student = require("../models/student.model");
 
 const rollNumberLookup = async (rollNumber, prefs) => {
-  console.log(prefs);
-  const student = await Student.count({
-    where: {
-      roll_number: rollNumber,
-    },
-  });
-  if (student >= 1) {
+  const studentExists =
+    (await Student.count({
+      where: {
+        roll_number: rollNumber,
+        id: {
+          [Op.ne]: prefs?.request?.params?.id,
+        },
+      },
+    })) > 0;
+
+  if (studentExists) {
     throw new Joi.ValidationError("Student with roll number already exists", [
       {
         message: "Student with roll number already exists",

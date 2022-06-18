@@ -1,21 +1,30 @@
 const express = require("express");
 const responseHelper = require("./helpers/response.helper").helper();
-
-const http = require("http");
+const db = require("./configs/db.config");
+const Student = require("./models/student.model");
 const routes = require("./routes");
 
 const port = process.env.PORT || "3000";
 const app = express();
-const server = http.createServer(app);
 
 app.use(responseHelper);
 app.use("/api", routes);
 
-server.listen(port);
-server.on("listening", () => {
-  const addr = server.address();
-  const bind = typeof addr === "string" ? `pipe ${addr}` : `port ${addr.port}`;
-  console.log(`Listening on ${bind}`);
-});
+const initApp = async (server, db) => {
+  try {
+    await db.authenticate();
+    console.log("Connection to database has been established successfully.");
+
+    Student.sync({ alter: true });
+
+    server.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+initApp(app, db);
 
 module.exports = app;

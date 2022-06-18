@@ -33,7 +33,7 @@
    npm start
    ```
 
-5. Run the following command to start the server in development mode:
+   Or, run the following command to start the server in development mode:
 
    ```
    npm run dev

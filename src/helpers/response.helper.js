@@ -22,6 +22,7 @@ const responseCodes = {
   resource_gone: 410,
   payload_too_large: 413,
   unsupported_media_type: 415,
+  unprocessable_entity: 422,
   too_many_requests: 429,
   server_error: 500,
   unsupported_grant_type: 501,
@@ -102,9 +103,13 @@ const responseHelper = (req, res, next = null) => {
   };
 
   res.failServerError = (
+    data = null,
     description = "Internal Server Error",
     code = null
   ) => {
+    if (process.env.NODE_ENV === "dev") {
+      description = data.toString();
+    }
     res.fail(description, responseCodes.server_error, code);
   };
 

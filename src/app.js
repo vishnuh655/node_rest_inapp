@@ -8,6 +8,7 @@ const Student = require("./models/student.model");
 
 const app = express();
 
+app.use(express.json());
 app.use(responseHelper.helper());
 app.use("/api", routes);
 

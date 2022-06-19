@@ -38,3 +38,25 @@
    ```
    npm run dev
    ```
+
+5. Open the browser and go to http://localhost:4000/api/docs to see the API documentation.
+
+### Frontend
+
+1. cd to the frontend directory.
+   ```
+   cd frontend
+   ```
+2. Run the following command to install the dependencies:
+
+   ```
+   npm install
+   ```
+
+3. Run the following command to start the server:
+
+   ```
+   npm start
+   ```
+
+4. Open the browser and go to http://localhost:3000/ to see the frontend.

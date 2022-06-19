@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const dotenv = require("dotenv").config();
 const routes = require("./routes");
 const db = require("./configs/db.config");
@@ -9,6 +10,7 @@ const Student = require("./models/student.model");
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 app.use(responseHelper.helper());
 app.use("/api", routes);
 

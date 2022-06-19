@@ -1,6 +1,7 @@
 import { Button, InputNumber, Form, Input, DatePicker, Row, Col } from "antd";
 import { useEffect } from "react";
 import moment from "moment";
+import formats from "../../constants/date";
 
 const StudentForm = (props) => {
   const [form] = Form.useForm();
@@ -14,7 +15,6 @@ const StudentForm = (props) => {
     } catch (error) {
       if (error.response?.status === 400 && error.response.data?.messages) {
         const validationErrors = error.response.data?.messages.error;
-        console.log(validationErrors);
         validationErrors.forEach((error) => {
           form.setFields([
             {
@@ -27,8 +27,11 @@ const StudentForm = (props) => {
     }
   };
 
+  const disabledDate = (current) => {
+    return current && current > moment().endOf("day");
+  };
+
   useEffect(() => {
-    console.log(props);
     form.setFieldsValue({
       name: props.data?.name,
       dob: props.data?.dob ? moment(props.data?.dob) : null,
@@ -62,7 +65,10 @@ const StudentForm = (props) => {
             name="dob"
             rules={[{ required: true, message: "Please input student's dob!" }]}
           >
-            <DatePicker />
+            <DatePicker
+              disabledDate={disabledDate}
+              format={formats.DATE_FORMAT}
+            />
           </Form.Item>
 
           <Form.Item
@@ -75,7 +81,7 @@ const StudentForm = (props) => {
               },
             ]}
           >
-            <InputNumber />
+            <InputNumber min={1} max={20000000} />
           </Form.Item>
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

@@ -2,7 +2,6 @@ const Joi = require("joi");
 
 module.exports = (schema, $property) => {
   return (req, res, next) => {
-    console.log(req);
     const { error } = schema.validate(req.body, schema);
     if (error) {
       const { details } = error;

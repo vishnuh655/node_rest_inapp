@@ -1,11 +1,14 @@
 import SimpleTable from "../components/Table/SimpleTable";
 import { Button, Drawer, message, Popconfirm, Modal, Descriptions } from "antd";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { api } from "../constants/api";
 import { useState, useEffect } from "react";
 import { PlusSquareOutlined } from "@ant-design/icons";
 import { Col, Row, Space } from "antd";
 import StudentForm from "../components/Forms/StudentForm";
+import moment from "moment";
+import formats from "../constants/date";
 
 const StudentManagement = () => {
   const [drawerVisible, setDrawerVisible] = useState(false);
@@ -35,6 +38,9 @@ const StudentManagement = () => {
       title: "Date of Birth",
       dataIndex: "dob",
       key: "dob",
+      render: (value, _) => {
+        return moment(value).format(formats.DATE_FORMAT);
+      },
     },
     {
       title: "Roll Number",
@@ -46,7 +52,12 @@ const StudentManagement = () => {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <Button onClick={() => editStudentAction(record)}>Edit</Button>
+          <Button
+            icon={<EditOutlined />}
+            onClick={() => editStudentAction(record)}
+          >
+            Edit
+          </Button>
           <Popconfirm
             placement="left"
             title={"Are you sure you want to delete this student?"}
@@ -57,7 +68,9 @@ const StudentManagement = () => {
             okText="Yes"
             cancelText="No"
           >
-            <Button danger>Delete</Button>
+            <Button danger icon={<DeleteOutlined />}>
+              Delete
+            </Button>
           </Popconfirm>
         </Space>
       ),
@@ -66,7 +79,6 @@ const StudentManagement = () => {
 
   const fetchStudents = async () => {
     const response = await axios.get(api.GET_STUDENTS);
-    console.log(response);
     if (response.status === 200) {
       setStudents(response.data);
     } else {
@@ -91,7 +103,6 @@ const StudentManagement = () => {
   };
 
   const createStudent = async (data) => {
-    console.log(data);
     const response = await axios.post(api.POST_STUDENTS, data);
     if (response.status === 201) {
       message.success("Student added succesfully");

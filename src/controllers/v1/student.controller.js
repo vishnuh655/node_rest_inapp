@@ -17,7 +17,9 @@ module.exports = {
 
   getStudents: async (req, res) => {
     try {
-      const students = await Student.findAll();
+      const students = await Student.findAll({
+        order: [["roll_number", "ASC"]],
+      });
       res.send(students);
     } catch (err) {
       res.failServerError(err);

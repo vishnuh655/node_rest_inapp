@@ -12,7 +12,7 @@ const rollNumberLookup = async (rollNumber, ref) => {
         },
       },
     })) > 0;
-  console.log(studentExists);
+
   if (studentExists) {
     throw new Joi.ValidationError("Student with roll number already exists", [
       {

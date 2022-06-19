@@ -14,6 +14,6 @@ module.exports = async (schema, req, res) => {
       });
       res.failValidationError({ error: message });
     });
-  console.log(validated);
+
   return validated;
 };

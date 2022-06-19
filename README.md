@@ -15,12 +15,6 @@
    npm install
    ```
 
-   or for development use:
-
-   ```
-   npm install --dev
-   ```
-
 3. Run the following command in the project directory to create .env file:
 
    ```

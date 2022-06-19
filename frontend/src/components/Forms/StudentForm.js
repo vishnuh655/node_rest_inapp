@@ -6,9 +6,24 @@ const StudentForm = (props) => {
   const [form] = Form.useForm();
 
   const studentFormSubmit = async (data) => {
-    const response = await props.request(data, props.data);
-    if (response) {
-      form.resetFields();
+    try {
+      const response = await props.request(data, props.data);
+      if (response?.status === 200 || response?.status === 201) {
+        form.resetFields();
+      }
+    } catch (error) {
+      if (error.response?.status === 400 && error.response.data?.messages) {
+        const validationErrors = error.response.data?.messages.error;
+        console.log(validationErrors);
+        validationErrors.forEach((error) => {
+          form.setFields([
+            {
+              name: error.path,
+              errors: [error.message],
+            },
+          ]);
+        });
+      }
     }
   };
 

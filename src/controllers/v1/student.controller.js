@@ -6,8 +6,10 @@ module.exports = {
   createStudent: async (req, res) => {
     try {
       const validatedData = await schemaValidate(StudentSchema, req, res);
-      const student = await Student.create(validatedData);
-      res.respondCreated(student, "Student created successfully");
+      if (validatedData) {
+        const student = await Student.create(validatedData);
+        res.respondCreated(student, "Student created successfully");
+      }
     } catch (err) {
       res.failServerError(err);
     }
@@ -17,6 +19,19 @@ module.exports = {
     try {
       const students = await Student.findAll();
       res.send(students);
+    } catch (err) {
+      res.failServerError(err);
+    }
+  },
+
+  getStudent: async (req, res) => {
+    try {
+      const student = await Student.findByPk(req.params.id);
+      if (student) {
+        res.send(student);
+      } else {
+        res.failNotFound("Student not found");
+      }
     } catch (err) {
       res.failServerError(err);
     }

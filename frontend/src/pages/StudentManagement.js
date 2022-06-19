@@ -1,5 +1,5 @@
 import SimpleTable from "../components/Table/SimpleTable";
-import { Button, Drawer } from "antd";
+import { Button, Drawer, message, Popconfirm, Modal, Descriptions } from "antd";
 import axios from "axios";
 import { api } from "../constants/api";
 import { useState, useEffect } from "react";
@@ -9,6 +9,7 @@ import StudentForm from "../components/Forms/StudentForm";
 
 const StudentManagement = () => {
   const [drawerVisible, setDrawerVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [drawerTitlle, setDrawerTitlle] = useState("Add Student");
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [students, setStudents] = useState([]);
@@ -18,7 +19,17 @@ const StudentManagement = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      render: (text) => <a>{text}</a>,
+      render: (text, record) => (
+        <a
+          onClick={async () => {
+            const student = await fetchStudentById(record.id);
+            setSelectedStudent(student);
+            setIsModalVisible(true);
+          }}
+        >
+          {text}
+        </a>
+      ),
     },
     {
       title: "Date of Birth",
@@ -36,7 +47,18 @@ const StudentManagement = () => {
       render: (_, record) => (
         <Space size="middle">
           <Button onClick={() => editStudentAction(record)}>Edit</Button>
-          <Button danger>Delete</Button>
+          <Popconfirm
+            placement="left"
+            title={"Are you sure you want to delete this student?"}
+            onConfirm={() => {
+              deleteStudent(record);
+              fetchStudents();
+            }}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button danger>Delete</Button>
+          </Popconfirm>
         </Space>
       ),
     },
@@ -48,7 +70,7 @@ const StudentManagement = () => {
     if (response.status === 200) {
       setStudents(response.data);
     } else {
-      console.log("Error");
+      message.error("Error while fetching students");
     }
   };
 
@@ -71,25 +93,45 @@ const StudentManagement = () => {
   const createStudent = async (data) => {
     console.log(data);
     const response = await axios.post(api.POST_STUDENTS, data);
-    console.log(response);
     if (response.status === 201) {
+      message.success("Student added succesfully");
       setDrawerVisible(false);
       fetchStudents();
-      return true;
     } else {
-      return false;
+      message.error("Error while creating student");
     }
+    return response;
   };
 
   const editStudent = async (data, record) => {
     const response = await axios.put(api.PUT_STUDENTS + record.id, data);
-    console.log(response);
     if (response.status === 200) {
+      message.success("Student updated succesfully");
       setDrawerVisible(false);
       fetchStudents();
-      return true;
     } else {
-      return false;
+      message.error("Error while updating student");
+    }
+    return response;
+  };
+
+  const deleteStudent = async (record) => {
+    const response = await axios.delete(api.DELETE_STUDENT + record.id);
+    if (response.status === 200) {
+      message.success("Student deleted succesfully");
+      fetchStudents();
+    } else {
+      message.error("Error while deleting student");
+    }
+  };
+
+  const fetchStudentById = async (id) => {
+    const response = await axios.get(api.GET_STUDENT + id);
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      message.error("Error while deleting student");
+      return null;
     }
   };
 
@@ -123,6 +165,27 @@ const StudentManagement = () => {
                 buttonText={selectedStudent ? "Update" : "Add"}
               ></StudentForm>
             </Drawer>
+            <Modal
+              title="Student Deatils"
+              visible={isModalVisible}
+              footer={null}
+              onCancel={() => {
+                setIsModalVisible(false);
+                setSelectedStudent(null);
+              }}
+            >
+              <Descriptions bordered>
+                <Descriptions.Item label="Name" span={3}>
+                  {selectedStudent && selectedStudent.name}
+                </Descriptions.Item>
+                <Descriptions.Item label="Date of Birth" span={3}>
+                  {selectedStudent && selectedStudent.dob}
+                </Descriptions.Item>
+                <Descriptions.Item label="Roll Number" span={3}>
+                  {selectedStudent && selectedStudent.roll_number}
+                </Descriptions.Item>
+              </Descriptions>
+            </Modal>
           </Col>
         </Row>
         <Row gutter={[16, 16]}>
